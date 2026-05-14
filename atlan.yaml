@@ -1,0 +1,22 @@
+name: hello-world
+display_name: Hello World
+type: connector
+visibility: public
+build_tag: v1
+self_deployed_runtime: false
+deploy:
+  execution_mode: native
+  splitDeploymentEnabled: true
+  keda:
+    enabled: true
+  env:
+    ATLAN_HEARTBEAT_TIMEOUT_SECONDS: '60'
+    ATLAN_START_TO_CLOSE_TIMEOUT_SECONDS: '300'
+  dapr:
+    objectstore: false
+    secretstore: false
+    statestore: false
+    eventstore: false
+    subscription: false
+    configurationstore: false
+    lock: false
