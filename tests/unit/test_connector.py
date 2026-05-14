@@ -1,9 +1,9 @@
 """Behavioural tests for HelloWorldApp tasks.
 
 The ``@task`` decorator does not wrap the function — it just attaches metadata.
-Outside a Temporal workflow context the methods execute as ordinary coroutines,
+Outside the workflow runtime the methods execute as ordinary coroutines,
 which is exactly what we want for fast unit tests: we exercise the real input/
-output contracts and on-disk side effects with no Temporal cluster.
+output contracts and on-disk side effects with no external services.
 """
 
 from __future__ import annotations

@@ -8,8 +8,8 @@
 # Build:
 #   docker build -t atlan-hello-world-app:latest .
 #
-# Run (combined HTTP + Temporal worker):
-#   docker run --rm -p 8000:8000 atlan-hello-world-app:latest
+# Production deploy: pushed by CI; the Atlan platform schedules it from
+# `atlan.yaml`. For local iteration use `make run` instead.
 
 FROM registry.atlan.com/public/app-runtime-base:3
 
