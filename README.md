@@ -38,7 +38,7 @@ atlan-hello-world-app/
 ├── README.md                  ← you are here
 ├── pyproject.toml             ← uv project; pins atlan-application-sdk
 ├── Dockerfile                 ← extends registry.atlan.com/public/app-runtime-base:3
-├── atlan.yaml                 ← App manifest (execution_mode, dapr, keda)
+├── atlan.yaml                 ← App manifest (execution_mode, runtime config)
 ├── app.yaml                   ← image binding for deployment
 ├── Makefile                   ← generate / test / run / lint
 ├── .env.example               ← documented dev env vars (copy to .env)
@@ -77,27 +77,26 @@ atlan-hello-world-app/
 
 - Python 3.11+
 - [`uv`](https://github.com/astral-sh/uv) — `curl -LsSf https://astral.sh/uv/install.sh | sh`
-- [Temporal dev server](https://docs.temporal.io/cli#server) — `brew install temporal`
+
+That's it. Everything else — workflow runtime, HTTP handler, worker — is
+brought up in-process by `application-sdk` when you run `make run`.
 
 ### One-time setup
 
 ```bash
-uv sync --all-extras
-cp .env.example .env   # optional, tweak if you want
+make install           # uv sync; pulls atlan-application-sdk into .venv
+cp .env.example .env   # optional — defaults work out of the box
 ```
 
 ### Run the dev server
 
 ```bash
-# Terminal 1: Temporal
-temporal server start-dev \
-  --dynamic-config-value frontend.WorkerHeartbeatsEnabled=true
-
-# Terminal 2: the app
-make run    # alias for: uv run python -m app.run_dev
+make run
 ```
 
-The HTTP handler listens on `http://localhost:8000` and the Temporal worker connects automatically.
+The HTTP handler listens on `http://localhost:8000`. The first run caches
+the in-process workflow runtime under `~/.cache`; every run after that is
+instant.
 
 ### Trigger a workflow
 
@@ -117,11 +116,11 @@ curl http://localhost:8000/workflows/v1/result/<workflow_id>
 ## Tests
 
 ```bash
-make test           # unit tests (fast, no Temporal needed)
-make test-all       # everything, including SDR (needs the container)
+make test           # unit tests — fast, hermetic, no services required
+make test-all       # everything, including the SDR end-to-end suite
 ```
 
-- **Unit tests** (`tests/unit/`) call `@task` bodies directly with a fake `AppContext`. Fast, hermetic, run on every PR.
+- **Unit tests** (`tests/unit/`) call `@task` bodies directly with a fake `AppContext`. Run on every PR.
 - **SDR tests** (`tests/sdr/`) start the customer-style SDR container, submit a workflow over HTTP, and poll for `COMPLETED`. They run in CI when a PR carries the `sdr-e2e-test` label.
 
 ---
@@ -144,14 +143,20 @@ make check-generate    # CI guard: fails if generated files are stale
 
 ```bash
 docker build -t atlan-hello-world-app:dev .
-
-# Run it standalone (same as production):
-docker run --rm -p 8000:8000 \
-  -e ATLAN_TEMPORAL_HOST=host.docker.internal:7233 \
-  atlan-hello-world-app:dev
 ```
 
-The base image (`registry.atlan.com/public/app-runtime-base:3`) brings `uv`, a non-root `appuser`, and the SDK runtime entrypoint — your Dockerfile stays a dozen lines.
+The base image (`registry.atlan.com/public/app-runtime-base:3`) brings `uv`, a non-root `appuser`, and the SDK runtime entrypoint — your Dockerfile stays a dozen lines. The deployed container connects to the runtime configured in your `atlan.yaml`; for local iteration use `make run` instead.
+
+---
+
+## What is `atlan.yaml` and `app.yaml`?
+
+Two small files, two distinct jobs:
+
+- **`atlan.yaml`** — the **app manifest**. Declares the app's identity (`name`, `display_name`, `type`, `visibility`), how it runs (`execution_mode`, KEDA autoscaling, timeouts), and which platform components it needs. The Atlan platform reads this when deploying the app.
+- **`app.yaml`** — the **image binding**. Just `app_name`, `app_image` (templated as `${APP_IMAGE}` and filled in by CI), and `app_port`. It's the deployment-time link between a built container and the manifest.
+
+You almost never edit `app.yaml`. You edit `atlan.yaml` when you add a real I/O surface (object storage, secrets, autoscaling rules).
 
 ---
 
@@ -162,18 +167,6 @@ The base image (`registry.atlan.com/public/app-runtime-base:3`) brings `uv`, a n
 3. **Write your tasks.** Replace `generate_greetings` and `summarize` in `app/connector.py`. Keep the shape: one `Input` in, one `Output` out, side-effects only inside `@task`-decorated methods.
 4. **Pin contracts.** Add a round-trip test to `tests/unit/test_contracts.py` for every new Input/Output dataclass.
 5. **Add an SDR scenario.** Drop a new `Scenario(...)` into `tests/sdr/test_hello_world_sdr.py` for each end-to-end path you care about.
-
----
-
-## What's intentionally absent
-
-To keep this reference readable, the following — present in production Atlan connectors — has been omitted:
-
-- **Credentials.** Add a credential model (`app/credentials.py`) and register it with `register_credential_type` when your source needs auth. See `atlan-openapi-app` for a worked example.
-- **`publish-app` handoff.** This app does not load assets into Atlan. Add an `upload` step (`self.upload(UploadInput(...))`) and the `transformed_data_prefix` output field once you have real assets to publish.
-- **Heavy CI.** Workflows like Snyk scanning, Dependabot cooldown, release gates, and the auto-fix bot are part of the Atlan-internal repo template, not the SDK. Add them as you go.
-
-The rest — App, `@task`, contracts, Pkl, Dockerfile, atlan.yaml, run_dev, unit + SDR tests — is everything a connector actually needs.
 
 ---
 
