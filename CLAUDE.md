@@ -8,19 +8,49 @@
 
 ## Project Overview
 
-<!-- Teams: Add project description, architecture, tech stack, data stores. -->
+Reference "hello world" app for the Atlan Application SDK. Two `@task`s, one
+workflow, no external system, no credentials. Designed so an external
+developer can read it top-to-bottom in 15 minutes and copy it as a template
+for a real connector.
+
+Keep that audience in mind for every change: clarity beats cleverness.
 
 ## Project Commands
 
-<!-- Teams: Add build, test, lint, deploy commands. -->
+- Install: `uv sync --all-extras`
+- Run dev server: `make run` (needs Temporal: `temporal server start-dev`)
+- Unit tests: `make test`
+- Lint + format + type-check: `make lint`
+- Regenerate contracts from Pkl: `make generate`
+- Verify generated files are not stale: `make check-generate`
 
 ## Coding Conventions
 
-<!-- Teams: Add language, style guide, naming conventions, error handling patterns. -->
+- Python 3.11+. Style: ruff (lint + format), pyright in standard mode.
+- Logging: `self.logger` from `App`. Use `%s` formatting (not f-strings) so
+  log records stay queryable.
+- Errors: raise typed errors from `application_sdk.errors`
+  (`InvalidInputError`, `DependencyUnavailableError`, `InternalError`).
+  Never raise bare `Exception` or `ValueError` from task code.
+- Contracts: every `@task` takes one `Input` subclass and returns one
+  `Output` subclass. Adding a field is fine; renaming or removing one is a
+  breaking change.
+- The top-level workflow input is generated from `contract/app.pkl`. Do not
+  hand-edit `app/generated/`; edit the Pkl source and run `make generate`.
 
 ## Architecture Notes
 
-<!-- Teams: Add design decisions, service boundaries, data flow, auth patterns. -->
+- `App.run()` is the Temporal workflow function — it must be deterministic.
+  Anything that touches the outside world (network, disk, clock) goes inside
+  a `@task`-decorated method.
+- Pkl drives both the Atlan UI form and the Python typed input — single
+  source of truth for the workflow schema.
+- This repo is a teaching artifact, not a production connector. Reject
+  changes that add domain complexity (credentials, asset mapping,
+  publish-app handoff) which obscure the minimum viable shape — push those
+  into a real connector repo instead.
+- All CI must be runnable on an external fork. Workflows depending on
+  Atlan-internal secrets or actions should be omitted or guarded.
 
 ---
 
