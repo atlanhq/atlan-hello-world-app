@@ -1,0 +1,33 @@
+amends "@app-contract-toolkit/NativeApp.pkl"
+
+import "@app-contract-toolkit/Config.pkl"
+
+name = "hello-world"
+displayName = "Hello World"
+icon = "http://assets.atlan.com/assets/hello.png"
+workflowType = name
+hasCredentialConfig = false
+flatManifestArgs = true
+
+uiConfig {
+  tasks {
+    ["Greeting"] {
+      description = "Configure the greeting this workflow produces."
+      inputs {
+        ["name"] = new Config.TextInput {
+          title = "Name"
+          helpText = "Who should the workflow greet?"
+          required = true
+          default = "World"
+          placeholderText = "World"
+        }
+        ["repeat_count"] = new Config.NumericInput {
+          title = "Repeat count"
+          helpText = "How many greeting records to generate."
+          required = false
+          default = 1
+        }
+      }
+    }
+  }
+}
