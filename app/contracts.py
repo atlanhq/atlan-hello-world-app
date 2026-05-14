@@ -1,9 +1,10 @@
 """Typed Input/Output contracts for the Hello World app.
 
-All Temporal-serialised dataclasses extend ``Input`` / ``Output`` from
-``application_sdk.contracts``. Each ``@task`` method on the connector takes
-exactly one ``Input`` subclass and returns exactly one ``Output`` subclass —
-this is what makes workflow replay and schema evolution safe.
+Every dataclass that crosses a workflow boundary extends ``Input`` /
+``Output`` from ``application_sdk.contracts``. Each ``@task`` method on the
+connector takes exactly one ``Input`` subclass and returns exactly one
+``Output`` subclass — this is what makes workflow replay and schema
+evolution safe.
 
 The top-level app input is auto-generated from ``contract/app.pkl`` into
 ``app/generated/_input.py``. Edit the Pkl file and re-run ``make generate``

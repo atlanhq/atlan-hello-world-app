@@ -1,6 +1,6 @@
 """Round-trip serialisation tests for the Hello World contracts.
 
-Every Input / Output dataclass that crosses a Temporal task boundary must
+Every Input / Output dataclass that crosses a workflow task boundary must
 survive ``model_dump_json`` → ``model_validate_json`` without losing fields
 or changing types. These tests pin that invariant so a schema-breaking
 change to ``contracts.py`` or ``contract/app.pkl`` fails CI before it ships.
