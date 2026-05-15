@@ -18,7 +18,7 @@ Keep that audience in mind for every change: clarity beats cleverness.
 ## Project Commands
 
 - Install: `uv sync --all-extras`
-- Run dev server: `make run` (needs Temporal: `temporal server start-dev`)
+- Run dev server: `make run` (runtime starts in-process; no external services)
 - Unit tests: `make test`
 - Lint + format + type-check: `make lint`
 - Regenerate contracts from Pkl: `make generate`
@@ -40,9 +40,9 @@ Keep that audience in mind for every change: clarity beats cleverness.
 
 ## Architecture Notes
 
-- `App.run()` is the Temporal workflow function — it must be deterministic.
-  Anything that touches the outside world (network, disk, clock) goes inside
-  a `@task`-decorated method.
+- `App.run()` is the workflow function — it must be deterministic so the SDK
+  runtime can replay it on retry. Anything that touches the outside world
+  (network, disk, clock) goes inside a `@task`-decorated method.
 - Pkl drives both the Atlan UI form and the Python typed input — single
   source of truth for the workflow schema.
 - This repo is a teaching artifact, not a production connector. Reject

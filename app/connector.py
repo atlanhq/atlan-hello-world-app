@@ -12,8 +12,8 @@ possible domain (no external system, no credentials):
    methods may do I/O — ``run`` must stay replay-safe.
 
 Read alongside ``contracts.py``: every task takes one ``Input`` subclass and
-returns one ``Output`` subclass, so Temporal can serialise the boundary and
-schema evolution stays safe.
+returns one ``Output`` subclass, so the runtime can serialise the boundary
+and schema evolution stays safe.
 """
 
 from __future__ import annotations
@@ -39,9 +39,9 @@ from app.contracts import (
 class HelloWorldApp(App):
     """The minimum-viable Atlan App.
 
-    ``name`` is the workflow type the SDK registers with Temporal — it must
-    match ``contract/app.pkl`` and ``atlan.yaml`` so the deployed task queue
-    (``atlan-hello-world-{deployment}``) routes work to this App.
+    ``name`` is the workflow type the SDK registers with its runtime — it
+    must match ``contract/app.pkl`` and ``atlan.yaml`` so the deployed task
+    queue (``atlan-hello-world-{deployment}``) routes work to this App.
     """
 
     name = "hello-world"
@@ -124,9 +124,9 @@ class HelloWorldApp(App):
     async def run(self, input: HelloWorldInput) -> HelloWorldOutput:  # type: ignore[override]
         """Orchestrate generate_greetings → summarize.
 
-        ``run`` is the Temporal workflow function — it must be deterministic.
-        Anything that touches the outside world (network, disk, clock) lives
-        inside a ``@task`` method, never here.
+        ``run`` is the workflow function — it must be deterministic so the
+        SDK can replay it on retry. Anything that touches the outside world
+        (network, disk, clock) lives inside a ``@task`` method, never here.
         """
         output_dir = input.output_dir or str(
             Path(tempfile.gettempdir()) / "hello-world" / self.run_id
