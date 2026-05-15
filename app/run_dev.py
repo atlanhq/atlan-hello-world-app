@@ -1,8 +1,8 @@
 """Local development server for atlan-hello-world-app.
 
-Boots the SDK's combined HTTP handler + worker in a single process. An
-in-process workflow runtime is started automatically — no external services
-to install, no second terminal.
+Boots the SDK's combined HTTP handler + worker. With ``local_dev_mode=True``
+the SDK brings up an in-process workflow runtime and uses in-process
+backends for state/secrets/storage — no external services required.
 
 Run::
 
@@ -22,7 +22,6 @@ import asyncio
 import os
 
 from application_sdk.main import run_dev_combined
-from temporalio.testing import WorkflowEnvironment
 
 from app.connector import HelloWorldApp
 
@@ -32,18 +31,13 @@ async def main() -> None:
     default_name = os.environ.get("HELLO_WORLD_DEFAULT_NAME", "World")
     repeat_count = int(os.environ.get("HELLO_WORLD_REPEAT_COUNT", "1"))
 
-    env = await WorkflowEnvironment.start_local()
-    try:
-        await run_dev_combined(
-            HelloWorldApp,
-            temporal_host=env.client.service_client.config.target_host,
-            example_input={
-                "name": default_name,
-                "repeat_count": repeat_count,
-            },
-        )
-    finally:
-        await env.shutdown()
+    await run_dev_combined(
+        HelloWorldApp,
+        example_input={
+            "name": default_name,
+            "repeat_count": repeat_count,
+        },
+    )
 
 
 if __name__ == "__main__":
