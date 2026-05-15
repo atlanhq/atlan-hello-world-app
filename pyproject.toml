@@ -4,8 +4,15 @@ version = "0.1.0"
 description = "Reference 'hello world' app for the Atlan Application SDK"
 requires-python = ">=3.11"
 dependencies = [
-    "atlan-application-sdk>=3.8.1,<4.0.0",
+    "atlan-application-sdk",
 ]
+
+# TODO: revert to a published version pin (``>=X.Y.Z,<4.0.0``) once
+# https://github.com/atlanhq/application-sdk/pull/1759 lands and ships.
+# Until then we pull the SDK from the feat branch so the embedded-Dapr +
+# embedded-Temporal local-dev path is available.
+[tool.uv.sources]
+atlan-application-sdk = { git = "https://github.com/atlanhq/application-sdk", branch = "feat/local-dev-mode" }
 
 [build-system]
 requires = ["hatchling"]
