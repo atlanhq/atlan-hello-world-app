@@ -79,6 +79,9 @@ yarn-error.log*
 .npm/
 .yarn/
 
+# ─── Local dev (in-process backends with local_dev_mode=True) ───────────────
+local/
+
 # ─── Logs & Temp Files ──────────────────────────────────────────────────────
 *.log
 logs/
