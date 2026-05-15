@@ -22,8 +22,8 @@ test:
 test-all:
 	uv run pytest tests -q
 
-# Run the local dev server (HTTP handler + Temporal worker in one process).
-# Requires a Temporal dev server: `temporal server start-dev`.
+# Run the local dev server. Boots the workflow runtime in-process —
+# no external services required.
 run:
 	uv run python -m app.run_dev
 
