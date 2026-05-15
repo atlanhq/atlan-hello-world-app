@@ -17,8 +17,6 @@ uv run pre-commit install
 2. Make your change. Keep the diff small and the README in sync.
 3. Run `make lint && make test`.
 4. Open a PR. The `checks.yml` workflow re-runs lint + unit tests.
-5. If your change affects the end-to-end behaviour, ask a maintainer to add
-   the `sdr-e2e-test` label so the SDR suite runs.
 
 ## Releases
 
