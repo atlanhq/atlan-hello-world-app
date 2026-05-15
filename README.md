@@ -2,7 +2,7 @@
 
 The smallest, end-to-end Atlan app — built on the [Application SDK](https://github.com/atlanhq/application-sdk) — designed as the **first thing an external developer reads** when they start building a connector.
 
-It does almost nothing on purpose: take a `name`, generate one or more `"Hello, {name}!"` records, and return a summary. What it *does* do is exercise every piece of the SDK you need for a real connector — typed contracts, `@task` orchestration, the local dev server, unit + SDR tests, the Pkl-driven UI manifest, the production Dockerfile — in the cleanest possible shape.
+It does almost nothing on purpose: take a `name`, generate one or more `"Hello, {name}!"` records, and return a summary. What it *does* do is exercise every piece of the SDK you need for a real connector — typed contracts, `@task` orchestration, the local dev server, unit tests, the Pkl-driven UI manifest, the production Dockerfile — in the cleanest possible shape.
 
 Use it as a template: copy the repo, rename `hello-world` → `your-connector`, swap the two tasks for your real extract + transform, and you're 80 % of the way to a connector PR.
 
@@ -57,16 +57,13 @@ atlan-hello-world-app/
 │       ├── _input.py
 │       └── manifest.json
 ├── tests/
-│   ├── unit/
-│   │   ├── test_contracts.py  ← JSON round-trip pinning for every contract
-│   │   └── test_connector.py  ← task bodies tested with a fake context
-│   └── sdr/
-│       └── test_hello_world_sdr.py  ← full SDR container end-to-end
+│   └── unit/
+│       ├── test_contracts.py  ← JSON round-trip pinning for every contract
+│       └── test_connector.py  ← task bodies tested with a fake context
 └── .github/
     ├── CODEOWNERS
     └── workflows/
-        ├── checks.yml                  ← pre-commit + unit tests on every PR
-        └── sdr-integration-tests.yaml  ← gated on `sdr-e2e-test` PR label
+        └── checks.yml                  ← pre-commit + unit tests on every PR
 ```
 
 ---
@@ -78,25 +75,49 @@ atlan-hello-world-app/
 - Python 3.11+
 - [`uv`](https://github.com/astral-sh/uv) — `curl -LsSf https://astral.sh/uv/install.sh | sh`
 
-That's it. Everything else — workflow runtime, HTTP handler, worker — is
-brought up in-process by `application-sdk` when you run `make run`.
+That's it. Everything else — the workflow runtime, the Dapr sidecar, the
+HTTP handler, the worker — is brought up by `application-sdk` itself.
 
-### One-time setup
-
-```bash
-make install           # uv sync; pulls atlan-application-sdk into .venv
-cp .env.example .env   # optional — defaults work out of the box
-```
-
-### Run the dev server
+### Step 1 — install dependencies
 
 ```bash
-make run
+uv sync --all-extras
 ```
 
-The HTTP handler listens on `http://localhost:8000`. The first run caches
-the in-process workflow runtime under `~/.cache`; every run after that is
-instant.
+- Reads `pyproject.toml` + `uv.lock`.
+- Creates a `.venv/` in the repo.
+- Installs Python dependencies into it (including `atlan-application-sdk`
+  and its transitive deps like `temporalio`, `obstore`, etc.).
+- One-time setup. Re-run only if you change `pyproject.toml` or pull a new
+  lockfile.
+
+### Step 2 — (optional) tweak environment
+
+```bash
+cp .env.example .env
+```
+
+The dev server runs with sensible defaults; only copy if you need to
+override one of the variables in `.env.example`.
+
+### Step 3 — run the dev server
+
+```bash
+uv run python -m app.run_dev
+```
+
+- Activates the `.venv` (implicit via `uv run`).
+- Imports `HelloWorldApp` and calls `run_dev_combined(HelloWorldApp, …)`.
+- The SDK does the rest: spawns an embedded `daprd` sidecar (downloads it
+  on first run, ~50 MB cached in `~/.cache/atlan-sdk/dapr/`), spawns an
+  embedded Temporal dev-server (~30 MB cached in `~/.cache/temporalio/`),
+  starts the HTTP handler on `:8000`, starts the worker, registers the
+  workflow.
+- Runs in the foreground; `Ctrl-C` to stop (both daemons are SIGTERM'd
+  cleanly, the temp components directory is removed).
+
+The first invocation takes ~30 s while the binaries download. Every
+invocation after that is instant.
 
 ### Trigger a workflow
 
@@ -116,12 +137,11 @@ curl http://localhost:8000/workflows/v1/result/<workflow_id>
 ## Tests
 
 ```bash
-make test           # unit tests — fast, hermetic, no services required
-make test-all       # everything, including the SDR end-to-end suite
+uv run pytest tests/unit -q
 ```
 
-- **Unit tests** (`tests/unit/`) call `@task` bodies directly with a fake `AppContext`. Run on every PR.
-- **SDR tests** (`tests/sdr/`) start the customer-style SDR container, submit a workflow over HTTP, and poll for `COMPLETED`. They run in CI when a PR carries the `sdr-e2e-test` label.
+Unit tests in `tests/unit/` call `@task` bodies directly with a fake
+`AppContext`. Fast, hermetic, run on every PR via `.github/workflows/checks.yml`.
 
 ---
 
@@ -162,11 +182,10 @@ You almost never edit `app.yaml`. You edit `atlan.yaml` when you add a real I/O 
 
 ## Making this *your* connector
 
-1. **Rename.** Replace `hello-world` / `HelloWorldApp` / `atlan-hello-world-app` everywhere. The grep targets are: `pyproject.toml`, `atlan.yaml`, `app.yaml`, `Dockerfile`, `main.py`, `app/connector.py`, `app/run_dev.py`, `contract/app.pkl`, `app/generated/manifest.json`, `.github/workflows/sdr-integration-tests.yaml`, this README.
+1. **Rename.** Replace `hello-world` / `HelloWorldApp` / `atlan-hello-world-app` everywhere. The grep targets are: `pyproject.toml`, `atlan.yaml`, `app.yaml`, `Dockerfile`, `main.py`, `app/connector.py`, `app/run_dev.py`, `contract/app.pkl`, `app/generated/manifest.json`, this README.
 2. **Define your input.** Edit `contract/app.pkl`, then `make generate`.
 3. **Write your tasks.** Replace `generate_greetings` and `summarize` in `app/connector.py`. Keep the shape: one `Input` in, one `Output` out, side-effects only inside `@task`-decorated methods.
 4. **Pin contracts.** Add a round-trip test to `tests/unit/test_contracts.py` for every new Input/Output dataclass.
-5. **Add an SDR scenario.** Drop a new `Scenario(...)` into `tests/sdr/test_hello_world_sdr.py` for each end-to-end path you care about.
 
 ---
 
