@@ -987,7 +987,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "atlan-application-sdk", specifier = ">=3.11.0,<4.0.0" }]
+requires-dist = [{ name = "atlan-application-sdk", specifier = ">=3.0.0,<4.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [
