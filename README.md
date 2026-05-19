@@ -1,9 +1,9 @@
 # atlan-hello-world-app
 
-A minimal, runnable **Atlan connector** you can clone, modify, and use as the
+A minimal, runnable **Atlan app** you can clone, modify, and use as the
 skeleton for your own. It does the smallest thing an Atlan app can do — take
 a name, generate `"Hello, {name}!"` records, return a summary — so you can
-focus on learning the shape of an Atlan connector, not the business logic.
+focus on learning the shape of an Atlan app, not the business logic.
 
 If you're here to build an integration that pulls metadata from your system
 into Atlan, **start with this repo**, get it running locally in two commands,
@@ -16,13 +16,7 @@ then replace the toy logic with your real extraction.
 An Atlan app is a small service that runs on the Atlan platform and does
 something useful with the metadata graph — pulling in metadata from a
 source system, publishing it back out, transforming or enriching it,
-reacting to events, automating a workflow. Connectors are the most common
-kind, but the same shape covers publishers, transformers, automations,
-agents, and anything else you want to plug into the platform.
-
-Internally an app is a **workflow**: a few discrete steps that the
-platform schedules, retries, and observes. Each step is a Python
-coroutine; the platform handles the orchestration, state, and recovery.
+reacting to events, automating a workflow.
 
 The [`application-sdk`](https://github.com/atlanhq/application-sdk) is the
 Python library Atlan provides for writing those workflows. This repo is
@@ -60,14 +54,14 @@ curl http://localhost:8000/workflows/v1/result/<workflow_id>
 #             "result": {"message": "Hello, Atlan!", "record_count": 3, ...}}}
 ```
 
-If you see `Hello, Atlan!` come back, the connector ran end-to-end. Hit
+If you see `Hello, Atlan!` come back, the app ran end-to-end. Hit
 `Ctrl-C` in the first terminal to stop it.
 
 ---
 
 ## How it works
 
-The whole connector is **two tasks chained into one workflow**:
+The whole app is **two tasks chained into one workflow**:
 
 ```
                   ┌──────────────────────┐
