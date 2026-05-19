@@ -128,9 +128,7 @@ class HelloWorldApp(App):
         SDK can replay it on retry. Anything that touches the outside world
         (network, disk, clock) lives inside a ``@task`` method, never here.
         """
-        output_dir = input.output_dir or str(
-            Path(tempfile.gettempdir()) / "hello-world" / self.run_id
-        )
+        output_dir = str(Path(tempfile.gettempdir()) / "hello-world" / self.run_id)
 
         self.logger.info(
             "hello-world workflow starting name=%s repeat_count=%d",
