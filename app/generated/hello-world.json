@@ -1,0 +1,45 @@
+{
+  "id": "hello-world",
+  "name": "Hello World",
+  "logo": "http://assets.atlan.com/assets/hello.png",
+  "config": {
+    "properties": {
+      "name": {
+        "type": "string",
+        "required": true,
+        "ui": {
+          "widget": "input",
+          "label": "Name",
+          "hidden": false,
+          "help": "Who should the workflow greet?",
+          "placeholder": "World",
+          "grid": 8
+        },
+        "default": "World"
+      },
+      "repeat_count": {
+        "type": "number",
+        "required": false,
+        "ui": {
+          "widget": "inputNumber",
+          "label": "Repeat count",
+          "hidden": false,
+          "help": "How many greeting records to generate.",
+          "grid": 8
+        },
+        "default": 1
+      }
+    },
+    "steps": [
+      {
+        "title": "Greeting",
+        "description": "Configure the greeting this workflow produces.",
+        "id": "greeting",
+        "properties": [
+          "name",
+          "repeat_count"
+        ]
+      }
+    ]
+  }
+}
