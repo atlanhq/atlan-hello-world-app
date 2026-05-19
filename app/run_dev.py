@@ -19,7 +19,6 @@ Trigger a workflow::
 """
 
 import asyncio
-import os
 
 from application_sdk.main import run_dev_combined
 
@@ -28,14 +27,11 @@ from app.connector import HelloWorldApp
 
 async def main() -> None:
     """Boot the dev runtime in-process and run the app against it."""
-    default_name = os.environ.get("HELLO_WORLD_DEFAULT_NAME", "World")
-    repeat_count = int(os.environ.get("HELLO_WORLD_REPEAT_COUNT", "1"))
-
     await run_dev_combined(
         HelloWorldApp,
         example_input={
-            "name": default_name,
-            "repeat_count": repeat_count,
+            "name": "World",
+            "repeat_count": 1,
         },
     )
 
