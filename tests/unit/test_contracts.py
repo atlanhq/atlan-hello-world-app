@@ -30,16 +30,14 @@ def _sample_file_ref(path: str = "/tmp/greetings.jsonl") -> FileReference:
 class TestHelloWorldInput:
     def test_defaults_round_trip(self) -> None:
         decoded = _round_trip(HelloWorldInput(), HelloWorldInput)
-        assert decoded.name == "World"
+        assert decoded.name == ""
         assert decoded.repeat_count == 1
-        assert decoded.output_dir == ""
 
     def test_custom_values_round_trip(self) -> None:
-        original = HelloWorldInput(name="Atlan", repeat_count=5, output_dir="/tmp/hello")
+        original = HelloWorldInput(name="Atlan", repeat_count=5)
         decoded = _round_trip(original, HelloWorldInput)
         assert decoded.name == "Atlan"
         assert decoded.repeat_count == 5
-        assert decoded.output_dir == "/tmp/hello"
 
 
 class TestHelloWorldOutput:
