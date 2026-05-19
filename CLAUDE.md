@@ -2,7 +2,6 @@
 
 > **Version:** 6.1 | **Updated:** 2026-03-26  
 > **Full Policy:** See `AGENTS.md` for all domain-specific rules and checklists.  
-> **Security Contact:** Slack `#bu-security-and-it`
 
 ---
 
