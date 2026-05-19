@@ -11,26 +11,29 @@ then replace the toy logic with your real extraction.
 
 ---
 
-## What's an Atlan connector?
+## What's an Atlan app?
 
-An Atlan connector is a small service that runs on the Atlan platform and
-pulls metadata (tables, columns, dashboards, lineage, etc.) out of a source
-system (Snowflake, dbt, Tableau, your custom data store, anything) and into
-Atlan. Internally it's a workflow: a few discrete steps — typically
-*extract* → *transform* → *upload* — that the platform schedules, retries,
-and observes.
+An Atlan app is a small service that runs on the Atlan platform and does
+something useful with the metadata graph — pulling in metadata from a
+source system, publishing it back out, transforming or enriching it,
+reacting to events, automating a workflow. Connectors are the most common
+kind, but the same shape covers publishers, transformers, automations,
+agents, and anything else you want to plug into the platform.
+
+Internally an app is a **workflow**: a few discrete steps that the
+platform schedules, retries, and observes. Each step is a Python
+coroutine; the platform handles the orchestration, state, and recovery.
 
 The [`application-sdk`](https://github.com/atlanhq/application-sdk) is the
-Python library Atlan provides for writing those workflows. This repo is the
-"hello world" example built on top of it.
+Python library Atlan provides for writing those workflows. This repo is
+the "hello world" example built on top of it.
 
 ---
 
 ## Try it in 30 seconds
 
 You need **Python 3.11+** and [**`uv`**](https://github.com/astral-sh/uv).
-Nothing else — no Docker, no Temporal, no Dapr to install. The SDK handles
-all of that for you.
+The SDK handles everything else for you.
 
 ```bash
 git clone https://github.com/atlanhq/atlan-hello-world-app.git
@@ -204,27 +207,6 @@ atlan-hello-world-app/
     └── workflows/
         └── checks.yml         ← pre-commit + unit tests on every PR
 ```
-
----
-
-## Going further
-
-A few things you'll want to do as you turn this into a real connector:
-
-- **Add credentials.** When your source system needs auth, define a
-  credential model under `app/credentials.py` and register it. Your
-  workflow can then resolve secrets from the credential store at runtime.
-- **Upload to Atlan.** A real connector's last step is `self.upload(...)`,
-  which writes the transformed JSONL to object storage where the Atlan
-  platform's loader picks it up. Add it when your transform output is
-  ready to land in Atlan.
-- **Regenerate after editing the contract.** Any change to
-  `contract/app.pkl` needs `make generate`. CI runs `make check-generate`
-  to catch stale generated files.
-- **Build the container.** `docker build -t my-connector:dev .` produces
-  the image the Atlan platform will run. For local iteration, keep using
-  `uv run python -m app.run_dev` — it's faster and needs nothing
-  installed.
 
 ---
 
