@@ -7,6 +7,8 @@ displayName = "Hello World"
 icon = "http://assets.atlan.com/assets/hello.png"
 workflowType = name
 hasCredentialConfig = false
+hasPublishStep = false
+extractActivityDisplayName = "Generate Hello World greetings"
 flatManifestArgs = true
 
 uiConfig {
