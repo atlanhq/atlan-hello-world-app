@@ -30,7 +30,7 @@ def _sample_file_ref(path: str = "/tmp/greetings.jsonl") -> FileReference:
 class TestHelloWorldInput:
     def test_defaults_round_trip(self) -> None:
         decoded = _round_trip(HelloWorldInput(), HelloWorldInput)
-        assert decoded.name == ""
+        assert decoded.name == "World"
         assert decoded.repeat_count == 1
 
     def test_custom_values_round_trip(self) -> None:

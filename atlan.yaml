@@ -1,17 +1,21 @@
+# AUTO-GENERATED from contract/app.pkl — DO NOT EDIT MANUALLY.
+# To regenerate: pkl eval -m . contract/app.pkl
 name: hello-world
 display_name: Hello World
 type: connector
+execution_mode: native
+icon_url: http://assets.atlan.com/assets/hello.png
 visibility: public
 build_tag: v1
 self_deployed_runtime: false
+entrypoints:
+- name: hello-world
+  display_name: Hello World
+  icon_url: http://assets.atlan.com/assets/hello.png
+  type: connector
 deploy:
   execution_mode: native
   splitDeploymentEnabled: true
-  keda:
-    enabled: true
-  env:
-    ATLAN_HEARTBEAT_TIMEOUT_SECONDS: '60'
-    ATLAN_START_TO_CLOSE_TIMEOUT_SECONDS: '300'
   dapr:
     objectstore: false
     secretstore: false
@@ -20,3 +24,8 @@ deploy:
     subscription: false
     configurationstore: false
     lock: false
+  keda:
+    enabled: true
+    minReplicaCount: 1
+    temporal:
+      targetQueueSize: 5
