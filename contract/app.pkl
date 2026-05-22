@@ -1,29 +1,37 @@
-amends "@app-contract-toolkit/NativeApp.pkl"
-
-import "@app-contract-toolkit/Config.pkl"
+amends "@app-contract-toolkit/App.pkl"
 
 name = "hello-world"
 displayName = "Hello World"
 icon = "http://assets.atlan.com/assets/hello.png"
-workflowType = name
 hasCredentialConfig = false
-hasPublishStep = false
-extractActivityDisplayName = "Generate Hello World greetings"
-flatManifestArgs = true
+
+deploy {
+  splitDeployment = true
+  keda {
+    enabled = true
+  }
+}
+
+pipeline {
+  extract {
+    displayName = "Generate Hello World greetings"
+  }
+  publish = null
+}
 
 uiConfig {
   tasks {
     ["Greeting"] {
       description = "Configure the greeting this workflow produces."
       inputs {
-        ["name"] = new Config.TextInput {
+        ["name"] = new TextInput {
           title = "Name"
           helpText = "Who should the workflow greet?"
           required = true
           default = "World"
           placeholderText = "World"
         }
-        ["repeat_count"] = new Config.NumericInput {
+        ["repeat_count"] = new NumericInput {
           title = "Repeat count"
           helpText = "How many greeting records to generate."
           required = false

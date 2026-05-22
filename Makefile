@@ -4,15 +4,15 @@
 install:
 	uv sync --all-extras
 
-# Regenerate app/generated/_input.py + manifest.json from contract/app.pkl.
+# Regenerate atlan.yaml, app.yaml, and app/generated/ from contract/app.pkl.
 # Requires `pkl` CLI: https://pkl-lang.org/main/current/pkl-cli/index.html
 generate:
-	pkl eval --project-dir contract -m app/generated contract/app.pkl
+	pkl eval --project-dir contract -m . contract/app.pkl
 
 # Fail if the checked-in generated files drift from the Pkl source. Used by CI.
 check-generate: generate
-	@git diff --exit-code app/generated/ \
-		|| (echo "ERROR: app/generated/ is stale. Run 'make generate' and commit." && exit 1)
+	@git diff --exit-code atlan.yaml app.yaml app/generated/ \
+		|| (echo "ERROR: generated files are stale. Run 'make generate' and commit." && exit 1)
 
 # Fast unit tests.
 test:
