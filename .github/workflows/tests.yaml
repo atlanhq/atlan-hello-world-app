@@ -1,0 +1,71 @@
+name: Tests
+
+# Unified workflow — unit tests via the connector-integration-tests composite
+# action. No integration or SDR jobs: this is a reference app with no external
+# system. Add tests/integration/ + an env block when wiring a real connector.
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main
+      - develop
+
+jobs:
+  unit-integration:
+    name: unit + integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    concurrency:
+      group: tests-unit-integration-${{ github.ref }}
+      cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+    permissions:
+      pull-requests: write
+      contents: read
+    outputs:
+      summary: ${{ steps.tests.outputs.summary }}
+    steps:
+      - name: Run all tests in one pytest invocation
+        id: tests
+        uses: atlanhq/application-sdk/.github/actions/connector-integration-tests@main
+        with:
+          app-name: hello-world
+          pytest-args: "-n auto --dist=loadfile --tb=short --cov=app --cov-report=xml --cov-report=html --cov-report=term --cov-fail-under=0"
+
+  tests-passed:
+    name: tests-passed
+    needs: [unit-integration]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Post unified test-summary comment on PR
+        if: always() && github.event_name == 'pull_request'
+        uses: mshick/add-pr-comment@b8f338c590a895d50bcbfa6c5859251edc8952fc # v2.8.2
+        with:
+          message-id: tests-summary
+          message: |
+            ## Tests Summary
+
+            | Job | Status | Result |
+            |---|---|---|
+            | unit + integration | ${{ needs.unit-integration.result == 'success' && '✅ Passed' || (needs.unit-integration.result == 'skipped' && '⊘ Skipped' || '❌ Failed') }} | `${{ needs.unit-integration.outputs.summary || 'no summary' }}` |
+
+            **Overall:** ${{ needs.unit-integration.result == 'success' && '✅ All passed' || '❌ Failed' }} — [view run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+        continue-on-error: true
+
+      - name: Verify test job succeeded
+        run: |
+          if [ "${{ needs.unit-integration.result }}" != "success" ]; then
+            echo "::error::unit + integration job did not succeed (result=${{ needs.unit-integration.result }})"
+            exit 1
+          fi
+          echo "All test jobs passed."
