@@ -149,7 +149,7 @@ uv run pytest tests/unit -q
 
 The tests call `@task` methods directly with a fake context — no SDK
 runtime needed. Fast, hermetic, and they run on every PR via
-`.github/workflows/checks.yml`. Add tests as you add tasks.
+`.github/workflows/tests.yaml`. Add tests as you add tasks.
 
 ---
 
@@ -199,7 +199,8 @@ atlan-hello-world-app/
 │       └── test_connector.py  ← task bodies tested with a fake context
 └── .github/
     └── workflows/
-        └── checks.yml         ← pre-commit + unit tests on every PR
+        ├── checks.yml         ← pre-commit on every PR
+        └── tests.yaml         ← unified unit tests (tests-passed gate)
 ```
 
 ---
