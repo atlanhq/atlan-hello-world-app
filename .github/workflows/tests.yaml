@@ -39,7 +39,7 @@ jobs:
           pytest-args: "-n auto --dist=loadfile --tb=short --cov=app --cov-report=xml --cov-report=html --cov-report=term --cov-fail-under=0"
 
   tests-passed:
-    name: tests-passed
+    name: Tests Gate
     needs: [unit-integration]
     if: always()
     runs-on: ubuntu-latest
