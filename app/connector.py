@@ -24,7 +24,6 @@ from pathlib import Path
 import orjson
 from application_sdk.app import App, task
 from application_sdk.contracts.types import FileReference, StorageTier
-from application_sdk.errors import InvalidInputError
 
 from app.contracts import (
     GenerateGreetingsInput,
@@ -34,6 +33,7 @@ from app.contracts import (
     SummarizeInput,
     SummarizeOutput,
 )
+from app.errors import GreetingsFileMissingError, InvalidRepeatCountError
 
 
 class HelloWorldApp(App):
@@ -57,12 +57,7 @@ class HelloWorldApp(App):
         Real connectors put their HTTP / SQL / object-store I/O here.
         """
         if input.repeat_count < 1:
-            raise InvalidInputError(
-                message="repeat_count must be >= 1",
-                field="repeat_count",
-                constraint=">= 1",
-                value_summary=str(input.repeat_count),
-            )
+            raise InvalidRepeatCountError(value_summary=str(input.repeat_count))
 
         out_dir = Path(input.output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -100,11 +95,7 @@ class HelloWorldApp(App):
         greetings_file = self.require(input.greetings_file, "greetings_file")
         path = Path(greetings_file.local_path or "")
         if not path.exists():
-            raise InvalidInputError(
-                message=f"greetings_file does not exist: {path}",
-                field="greetings_file",
-                constraint="file must exist",
-            )
+            raise GreetingsFileMissingError(value_summary=str(path))
 
         last_message = ""
         record_count = 0

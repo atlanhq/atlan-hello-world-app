@@ -71,6 +71,16 @@ env/
 *.egg-info/
 dist/
 build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage*
+htmlcov/
+
+# ─── Atlan SDK ──────────────────────────────────────────────────────────────
+.atlan/
+.claude/worktrees/
+remediation/
 
 # ─── Node.js ────────────────────────────────────────────────────────────────
 node_modules/
