@@ -11,7 +11,7 @@ name: Renovate — auto-approve dependency-only PRs
 
 on:
   workflow_run:
-    workflows: [Tests, Conformance, Pre-commit Checks]
+    workflows: [Tests, Conformance, Pre-commit Checks, Vulnerability Scan]
     types: [completed]
     branches: ['renovate/**']
   workflow_dispatch:
