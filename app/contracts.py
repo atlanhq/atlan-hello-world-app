@@ -50,9 +50,6 @@ class GenerateGreetingsInput(Input):
     repeat_count: int = 1
     """How many greeting records to emit. Must be >= 1."""
 
-    output_dir: str = ""
-    """Directory the task should write its JSONL file into."""
-
 
 class GenerateGreetingsOutput(Output):
     """Output from the ``generate_greetings`` task."""

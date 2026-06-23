@@ -59,8 +59,7 @@ class HelloWorldApp(App):
         if input.repeat_count < 1:
             raise InvalidRepeatCountError(value_summary=str(input.repeat_count))
 
-        out_dir = Path(input.output_dir)
-        out_dir.mkdir(parents=True, exist_ok=True)
+        out_dir = Path(tempfile.mkdtemp(prefix="hello-world-"))
         out_path = out_dir / "greetings.jsonl"
 
         self.logger.info(
@@ -119,8 +118,6 @@ class HelloWorldApp(App):
         SDK can replay it on retry. Anything that touches the outside world
         (network, disk, clock) lives inside a ``@task`` method, never here.
         """
-        output_dir = str(Path(tempfile.gettempdir()) / "hello-world" / self.run_id)
-
         self.logger.info(
             "hello-world workflow starting name=%s repeat_count=%d",
             input.name,
@@ -131,7 +128,6 @@ class HelloWorldApp(App):
             GenerateGreetingsInput(
                 name=input.name,
                 repeat_count=input.repeat_count,
-                output_dir=output_dir,
             )
         )
 
