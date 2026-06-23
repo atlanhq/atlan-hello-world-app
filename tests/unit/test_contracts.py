@@ -65,14 +65,12 @@ class TestGenerateGreetingsContracts:
         decoded = _round_trip(GenerateGreetingsInput(), GenerateGreetingsInput)
         assert decoded.name == "World"
         assert decoded.repeat_count == 1
-        assert decoded.output_dir == ""
 
     def test_input_values(self) -> None:
-        original = GenerateGreetingsInput(name="Atlan", repeat_count=7, output_dir="/tmp/raw")
+        original = GenerateGreetingsInput(name="Atlan", repeat_count=7)
         decoded = _round_trip(original, GenerateGreetingsInput)
         assert decoded.name == "Atlan"
         assert decoded.repeat_count == 7
-        assert decoded.output_dir == "/tmp/raw"
 
     def test_output_defaults(self) -> None:
         decoded = _round_trip(GenerateGreetingsOutput(), GenerateGreetingsOutput)

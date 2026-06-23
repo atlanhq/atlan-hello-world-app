@@ -13,8 +13,6 @@
 
 FROM registry.atlan.com/public/app-runtime-base:3
 
-ARG APP_MODULE=app.connector:HelloWorldApp
-
 WORKDIR /app
 
 # Install locked dependencies first so the layer caches across code edits.
@@ -26,5 +24,5 @@ RUN --mount=type=cache,target=/home/appuser/.cache/uv,uid=1000,gid=1000 \
 # Copy application code.
 COPY --chown=appuser:appuser app/ app/
 
-ENV ATLAN_APP_MODULE=${APP_MODULE}
+ENV ATLAN_APP_MODULE=app.connector:HelloWorldApp
 ENV ATLAN_CONTRACT_GENERATED_DIR=/app/app/generated
