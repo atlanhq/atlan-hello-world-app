@@ -4,15 +4,16 @@
     "extract": {
       "activity_name": "execute_workflow",
       "activity_display_name": "Generate Hello World greetings",
-      "app_name": "{app_name}",
+      "app_name": "hello-world",
       "inputs": {
         "workflow_type": "hello-world",
-        "app_name": "{app_name}",
+        "app_name": "hello-world",
         "app_id": "",
         "argo_workflow_slug": "",
         "task_queue": "atlan-hello-world-{deployment_name}",
         "args": {
           "credential": "{{credential}}",
+          "agent_json": "{{agent-json}}",
           "name": "{{name}}",
           "repeat_count": "{{repeat_count}}"
         }
