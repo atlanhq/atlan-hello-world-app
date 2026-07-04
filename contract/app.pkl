@@ -4,6 +4,7 @@ name = "hello-world"
 displayName = "Hello World"
 icon = "http://assets.atlan.com/assets/hello.png"
 hasCredentialConfig = false
+selfDeployedRuntime = false
 
 deploy {
   splitDeployment = true

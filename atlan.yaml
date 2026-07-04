@@ -7,7 +7,7 @@ execution_mode: native
 icon_url: http://assets.atlan.com/assets/hello.png
 visibility: public
 build_tag: v1
-self_deployed_runtime: true
+self_deployed_runtime: false
 entrypoints:
 - name: hello-world
   display_name: Hello World
