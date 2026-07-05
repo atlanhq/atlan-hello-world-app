@@ -68,6 +68,10 @@ for f in files:
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+# Bootstrap-managed vendor file (conformance C002) — its canonical formatting
+# doesn't survive ruff-format's line-collapsing, causing the two gates to
+# fight each other. Content is fully dictated by `bootstrap`, never hand-edited.
+extend-exclude = [".github/scripts/build_conformance_args.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "RUF"]
