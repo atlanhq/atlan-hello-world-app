@@ -31,6 +31,12 @@ typeCheckingMode = "standard"
 reportMissingTypeStubs = false
 reportMissingImports = false
 
+# hello-world is a reference scaffold with no external system to connect to
+# and self_deployed_runtime: false — there is nothing for an integration or
+# e2e suite to exercise yet. Revisit if this app grows a real connector.
+[tool.conformance]
+exempt_test_tiers = ["integration", "e2e"]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
@@ -42,27 +48,16 @@ start-temporal = "temporal server start-dev --db-filename ./tmp/temporal.db"
 start-deps.shell = "mkdir -p tmp && poe start-dapr & poe start-temporal &"
 stop-deps.shell = "lsof -ti:3500,7233,8233,50001 | xargs kill -9 2>/dev/null || true"
 
-# Download Dapr component YAMLs from application-sdk. SDK_VERSION matches the
-# minimum pin in [project.dependencies] so components stay in sync with the SDK.
+# Copy Dapr component YAMLs bundled in the installed atlan-application-sdk
+# wheel, so components stay in sync with whatever SDK version is locked.
 [tool.poe.tasks.download-components]
 interpreter = "python"
-env = { SDK_VERSION = "v3.13.4" }
 shell = """
-import json, os, pathlib, urllib.request
+import pathlib, shutil
+import application_sdk
 
-components_dir = pathlib.Path("components")
-components_dir.mkdir(exist_ok=True)
-
-api_url = "https://api.github.com/repos/atlanhq/application-sdk/contents/components"
-req = urllib.request.Request(f"{api_url}?ref={os.environ['SDK_VERSION']}")
-with urllib.request.urlopen(req) as resp:
-    files = json.loads(resp.read())
-
-for f in files:
-    if f["type"] == "file" and f["name"].endswith(".yaml"):
-        with urllib.request.urlopen(f["download_url"]) as resp:
-            (components_dir / f["name"]).write_bytes(resp.read())
-        print(f"Downloaded: {f['name']}")
+src = pathlib.Path(application_sdk.__file__).parent / "components"
+shutil.copytree(src, "components", dirs_exist_ok=True)
 """
 
 [tool.ruff]
