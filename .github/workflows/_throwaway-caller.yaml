@@ -3,3 +3,4 @@ on: workflow_dispatch
 jobs:
   call-test:
     uses: atlanhq/application-sdk/.github/workflows/_throwaway-org-secret-visibility-test.yaml@phase2-category-a
+    secrets: inherit
