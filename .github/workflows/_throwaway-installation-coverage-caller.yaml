@@ -1,0 +1,6 @@
+name: _throwaway Installation Coverage Test Caller
+on: workflow_dispatch
+jobs:
+  call-test:
+    uses: atlanhq/application-sdk/.github/workflows/_throwaway-declared-secret-test.yaml@phase2-category-a
+    secrets: inherit
