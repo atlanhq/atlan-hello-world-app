@@ -2,8 +2,9 @@
 # Regenerate with: pkl eval -m . contract/app.pkl
 from __future__ import annotations
 
-from application_sdk.testing.e2e.substitutions import MustacheSubstitutions
 from pydantic import Field
+
+from application_sdk.testing.e2e.substitutions import MustacheSubstitutions
 
 
 class HelloWorldMustacheSubstitutions(MustacheSubstitutions):
