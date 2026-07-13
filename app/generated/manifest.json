@@ -17,6 +17,9 @@
           "name": "{{name}}",
           "repeat_count": "{{repeat_count}}"
         }
+      },
+      "error_handling": {
+        "start_to_close_timeout_seconds": 86400
       }
     }
   }

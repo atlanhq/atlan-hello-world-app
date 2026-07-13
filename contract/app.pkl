@@ -6,10 +6,14 @@ icon = "http://assets.atlan.com/assets/hello.png"
 hasCredentialConfig = false
 selfDeployedRuntime = false
 
-deploy {
+deploy = new DeployConfig {
   splitDeployment = true
-  keda {
-    enabled = true
+  pools {
+    ["default"] = new Pool {
+      keda {
+        enabled = true
+      }
+    }
   }
 }
 
