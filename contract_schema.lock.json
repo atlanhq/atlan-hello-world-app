@@ -146,9 +146,21 @@
     },
     {
       "contract": "HelloWorldOutput",
+      "field": "artifacts",
+      "status": "active",
+      "type": "dict[str, Any] | None"
+    },
+    {
+      "contract": "HelloWorldOutput",
       "field": "message",
       "status": "active",
       "type": "str"
+    },
+    {
+      "contract": "HelloWorldOutput",
+      "field": "metrics",
+      "status": "active",
+      "type": "dict[str, Any] | None"
     },
     {
       "contract": "HelloWorldOutput",
@@ -161,6 +173,12 @@
       "field": "record_count",
       "status": "active",
       "type": "int"
+    },
+    {
+      "contract": "HelloWorldOutput",
+      "field": "status",
+      "status": "active",
+      "type": "OutputStatus"
     },
     {
       "contract": "IncrementalExtractionInput",
