@@ -30,3 +30,4 @@ pools:
       minReplicaCount: 0
       temporal:
         targetQueueSize: 5
+app_id: 00000000-0000-0000-0000-000000000000
