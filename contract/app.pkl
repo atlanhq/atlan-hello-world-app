@@ -6,6 +6,15 @@ icon = "http://assets.atlan.com/assets/hello.png"
 hasCredentialConfig = false
 selfDeployedRuntime = false
 
+// metadata entries are emitted as top-level keys in the generated atlan.yaml.
+metadata {
+  // Placeholder UUID: hello-world is a reference scaffold, not published to the
+  // Global Marketplace. A REAL app must set its own GM app_id here (find it at
+  // /admin/#/apps/<app_id>/versions) — the marketplace publish POSTs this value,
+  // and an empty/unknown one returns 404. Do not suppress this; supply the UUID.
+  ["app_id"] = "00000000-0000-0000-0000-000000000000"
+}
+
 deploy = new DeployConfig {
   splitDeployment = true
   pools {

@@ -43,6 +43,9 @@ asyncio_default_fixture_loop_scope = "session"
 testpaths = ["tests/unit"]
 
 [tool.poe.tasks]
+# Regenerate atlan.yaml, app.yaml, and app/generated/ from contract/app.pkl.
+# Mirrors the Makefile `generate` target; used by the SDK Certify publish step.
+generate = "pkl eval --project-dir contract -m . contract/app.pkl"
 start-dapr = "dapr run --enable-api-logging --log-level debug --app-id app --app-port 8000 --dapr-http-port 3500 --dapr-grpc-port 50001 --scheduler-host-address '' --placement-host-address '' --max-body-size 1024Mi --config components/configuration.yaml --resources-path components"
 start-temporal = "temporal server start-dev --db-filename ./tmp/temporal.db"
 start-deps.shell = "mkdir -p tmp && poe start-dapr & poe start-temporal &"
