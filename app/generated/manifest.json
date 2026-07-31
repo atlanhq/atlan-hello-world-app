@@ -12,6 +12,7 @@
         "argo_workflow_slug": "",
         "task_queue": "atlan-hello-world-{deployment_name}",
         "args": {
+          "app_name": "hello-world",
           "credential": "{{credential}}",
           "agent_json": "{{agent-json}}",
           "name": "{{name}}",
