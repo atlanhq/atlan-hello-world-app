@@ -35,6 +35,16 @@ from app.contracts import (
 )
 from app.errors import GreetingsFileMissingError, InvalidRepeatCountError
 
+# Shared @task timeout budget for this app's tasks. heartbeat_timeout is kept
+# an order of magnitude below timeout_seconds (not ~50%, as it was before)
+# so a transient event-loop stall can't trip a heartbeat timeout well before
+# the activity's actual start-to-close budget is spent (HB-10). Defined once
+# and reused by both tasks below so the ratio can't drift out of sync between
+# them.
+_TASK_TIMEOUT_SECONDS = 300
+_TASK_HEARTBEAT_TIMEOUT_SECONDS = 30
+_TASK_AUTO_HEARTBEAT_SECONDS = 10
+
 
 class HelloWorldApp(App):
     """The minimum-viable Atlan App.
@@ -47,9 +57,9 @@ class HelloWorldApp(App):
     name = "hello-world"
 
     @task(
-        timeout_seconds=60,
-        heartbeat_timeout_seconds=30,
-        auto_heartbeat_seconds=10,
+        timeout_seconds=_TASK_TIMEOUT_SECONDS,
+        heartbeat_timeout_seconds=_TASK_HEARTBEAT_TIMEOUT_SECONDS,
+        auto_heartbeat_seconds=_TASK_AUTO_HEARTBEAT_SECONDS,
     )
     async def generate_greetings(self, input: GenerateGreetingsInput) -> GenerateGreetingsOutput:
         """Write ``input.repeat_count`` greetings as JSONL.
@@ -85,9 +95,9 @@ class HelloWorldApp(App):
         )
 
     @task(
-        timeout_seconds=60,
-        heartbeat_timeout_seconds=30,
-        auto_heartbeat_seconds=10,
+        timeout_seconds=_TASK_TIMEOUT_SECONDS,
+        heartbeat_timeout_seconds=_TASK_HEARTBEAT_TIMEOUT_SECONDS,
+        auto_heartbeat_seconds=_TASK_AUTO_HEARTBEAT_SECONDS,
     )
     async def summarize(self, input: SummarizeInput) -> SummarizeOutput:
         """Read greetings JSONL and produce a one-line summary."""
