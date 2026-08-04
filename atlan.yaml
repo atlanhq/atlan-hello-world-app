@@ -7,6 +7,11 @@ execution_mode: native
 icon_url: http://assets.atlan.com/assets/hello.png
 visibility: public
 build_tag: v1
+# Publish authoritative semver images from GitHub Releases instead of the CD
+# default (mutable main-<sha> tag). Merges to main still build the image but no
+# longer auto-publish to channel='all' — only a GitHub Release publishes to all
+# tenants.
+release_model: semver
 self_deployed_runtime: false
 entrypoints:
 - name: hello-world
