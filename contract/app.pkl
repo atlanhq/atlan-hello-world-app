@@ -55,10 +55,3 @@ uiConfig {
     }
   }
 }
-
-// Extra atlan.yaml keys the typed App.pkl does not model yet.
-atlanYamlOverrides {
-  // Publish authoritative semver images from GitHub Releases instead of the
-  // CD default. Kept here so it survives `pkl eval` regeneration of atlan.yaml.
-  ["release_model"] = "semver"
-}
