@@ -8,6 +8,12 @@ selfDeployedRuntime = false
 
 // metadata entries are emitted as top-level keys in the generated atlan.yaml.
 metadata {
+  // Publish authoritative semver images from GitHub Releases instead of the CD
+  // default (mutable main-<sha> tag). Merges to main still build the image but no
+  // longer auto-publish to channel='all' — only a GitHub Release publishes to all
+  // tenants. `release_model` has no typed field on the contract toolkit, so it
+  // rides in `metadata`, which is deep-merged onto the generated atlan.yaml.
+  ["release_model"] = "semver"
   // Placeholder UUID: hello-world is a reference scaffold, not published to the
   // Global Marketplace. A REAL app must set its own GM app_id here (find it at
   // /admin/#/apps/<app_id>/versions) — the marketplace publish POSTs this value,
