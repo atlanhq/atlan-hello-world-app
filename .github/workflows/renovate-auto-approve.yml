@@ -41,4 +41,7 @@ jobs:
       event_name: ${{ github.event_name }}
       head_sha: ${{ github.event.workflow_run.head_sha }}
       pr_number: ${{ inputs.pr_number }}
+      # Must match the ref in `uses:` above — the two together are what make this
+      # a real end-to-end pilot rather than a run of main's gate.
+      sdk_ref: chrishehim/fnd-372
     secrets: inherit
