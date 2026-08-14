@@ -6,6 +6,12 @@
 #   - Wiring the trigger (workflow_run on this repo's required-check workflows)
 #   - Filtering out failed/cancelled upstream runs before spending a runner
 #   - Forwarding event context as inputs to the reusable
+#
+# ⚠️ PILOT — DO NOT MERGE. The `uses:` ref below is temporarily pointed at the
+# application-sdk branch for FND-372 (the extraction of the approval conditions
+# out of inline bash into a tested script) so the new gate can be exercised
+# end to end against a real Renovate PR before it lands on main. Revert to
+# @main and close this PR once the pilot is done.
 
 name: Renovate — auto-approve dependency-only PRs
 
@@ -30,7 +36,7 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch'
       || github.event.workflow_run.conclusion == 'success'
-    uses: atlanhq/application-sdk/.github/workflows/renovate-auto-approve-reusable.yml@main
+    uses: atlanhq/application-sdk/.github/workflows/renovate-auto-approve-reusable.yml@chrishehim/fnd-372
     with:
       event_name: ${{ github.event_name }}
       head_sha: ${{ github.event.workflow_run.head_sha }}
