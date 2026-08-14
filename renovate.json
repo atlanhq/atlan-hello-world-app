@@ -3,16 +3,18 @@
   "extends": [
     "github>atlanhq/application-sdk//renovate-config/default.json"
   ],
-  "lockFileMaintenance": {
-    "automerge": false,
-    "platformAutomerge": false
-  },
   "packageRules": [
     {
-      "description": "Soft rollout: Renovate raises PRs but does not auto-merge. Remove this rule (and the lockFileMaintenance override above) when the app's test gate is proven and auto-merge is desired.",
-      "matchPackageNames": ["*"],
-      "automerge": false,
-      "platformAutomerge": false
+      "description": "Org security baseline §5: 7-day release-age cooldown before a third-party version is eligible for a PR. Scoped to the datasources that carry third-party code (pypi, github-actions); the first-party Atlan packages are negated because the supply-chain rationale does not apply to releases we publish ourselves and a week's delay would stall the fleet's own release loop. The app-contract-toolkit lane is exempt by construction — it resolves through the custom.regex manager on the github-tags datasource (packageName atlanhq/application-sdk), which this rule does not match. Caveat: Renovate does not apply minimumReleaseAge to the lockFileMaintenance lane, so lock refreshes are not covered by this cooldown.",
+      "matchDatasources": [
+        "pypi",
+        "github-actions"
+      ],
+      "matchPackageNames": [
+        "!atlan-application-sdk",
+        "!atlan-application-sdk-conformance"
+      ],
+      "minimumReleaseAge": "7 days"
     }
   ]
 }
