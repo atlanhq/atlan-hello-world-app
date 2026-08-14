@@ -24,6 +24,27 @@ dev = [
     "poethepoet>=0.34.0",
 ]
 
+# Supply-chain cooldown (org security baseline §5): a version must have been
+# public for 7 days before any resolution here can pick it up. It lives in
+# config, not in a `uv lock --exclude-newer` command, because uv writes its
+# resolver settings into uv.lock under `[options]` and every consumer that
+# validates the lock — `uv sync --locked` in the Dockerfile — compares its own
+# settings against that block. A bound supplied only to the locking command
+# produces a lock the image build then rejects as stale (FND-367). Renovate's
+# lock refresh shells out to uv and inherits this with nothing to configure.
+#
+# Exemptions are Atlan's own published packages: the cooldown guards against an
+# unvetted third-party publisher, which is not what we are to ourselves, and a
+# 7-day hold would stall the fleet's own release loop. pyatlan is exempt for the
+# same reason and is load-bearing here — the SDK pins `pyatlan>=10,<11`, and
+# `exclude-newer` bounds the floor a pin REQUIRES, not just the ceiling an
+# upgrade would reach, so without this the project is unresolvable rather than
+# merely stale. Keep in step with the cooldown exemption packageRule in the
+# fleet preset (atlanhq/application-sdk//renovate-config/default.json).
+[tool.uv]
+exclude-newer = "P7D"
+exclude-newer-package = { atlan-application-sdk = "P0D", atlan-application-sdk-conformance = "P0D", pyatlan = "P0D" }
+
 [tool.pyright]
 venvPath = "."
 venv = ".venv"
