@@ -108,3 +108,5 @@ logs/
 *.tgz
 *.rar
 *.7z
+
+.mothership/.cache/
