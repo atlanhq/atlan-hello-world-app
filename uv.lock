@@ -7,6 +7,9 @@ resolution-markers = [
     "python_full_version < '3.13'",
 ]
 
+[options]
+exclude-newer-span = "P3D"  # refusal: window-empty
+
 [[package]]
 name = "aiohappyeyeballs"
 version = "2.7.1"
