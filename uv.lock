@@ -1131,7 +1131,7 @@ requires-dist = [{ name = "atlan-application-sdk", specifier = ">=3.13.0,<4.0.0"
 [package.metadata.requires-dev]
 dev = [
     { name = "atlan-application-sdk", extras = ["tests"], specifier = ">=3.0.0,<4.0.0" },
-    { name = "atlan-application-sdk-conformance", specifier = ">=0.1.0,<1.0.0" },
+    { name = "atlan-application-sdk-conformance", specifier = "<=1.0.0" },
     { name = "poethepoet", specifier = ">=0.34.0" },
     { name = "pre-commit", specifier = ">=4.2.0,<5" },
     { name = "pytest", specifier = ">=9.0.2,<10" },
