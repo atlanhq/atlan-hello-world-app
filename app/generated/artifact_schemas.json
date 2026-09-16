@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "schemas": {
+    "output_file": {
+      "format": "ndjson",
+      "description": "One greeting record per line, in the order they were generated.",
+      "fields": [
+        {
+          "name": "index",
+          "type": "int",
+          "required": true,
+          "description": "Zero-based position of this greeting within the run, so a consumer can restore order without relying on line order."
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "required": true,
+          "description": "The rendered greeting, e.g. \"Hello, World!\". This is the value `summarize` reads back and returns as the workflow's message."
+        }
+      ]
+    }
+  }
+}

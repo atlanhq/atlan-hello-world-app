@@ -21,6 +21,34 @@ metadata {
   ["app_id"] = "00000000-0000-0000-0000-000000000000"
 }
 
+// The shape of every artifact this app hands off through a `FileReference`
+// field on its entrypoint contract (conformance K016). An entry point's
+// contracts are a public boundary — without this, whatever reads the artifact
+// has no way to check that what was written matches what it expects. A warning
+// today, an error in SDK v4.0.
+//
+// Keys are contract field names, never paths: `output_file` is the field on
+// `HelloWorldOutput`. The records below are what `generate_greetings` writes,
+// one JSON object per line.
+artifactSchemas {
+  ["output_file"] = new ArtifactSchema {
+    format = "ndjson"
+    description = "One greeting record per line, in the order they were generated."
+    fields {
+      new ArtifactField {
+        name = "index"
+        type = "int"
+        description = "Zero-based position of this greeting within the run, so a consumer can restore order without relying on line order."
+      }
+      new ArtifactField {
+        name = "message"
+        type = "string"
+        description = "The rendered greeting, e.g. \"Hello, World!\". This is the value `summarize` reads back and returns as the workflow's message."
+      }
+    }
+  }
+}
+
 deploy = new DeployConfig {
   splitDeployment = true
   pools {
