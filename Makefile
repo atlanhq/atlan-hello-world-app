@@ -1,4 +1,4 @@
-.PHONY: install generate check-generate test test-all run lint clean
+.PHONY: install generate check-generate test test-integration test-all run lint clean
 
 # Install runtime + dev dependencies into a local .venv.
 install:
@@ -17,6 +17,12 @@ check-generate: generate
 # Fast unit tests.
 test:
 	uv run pytest tests/unit -q
+
+# Integration tier: runs the App on the SDK integration fixture kit (embedded
+# Temporal dev server, mocked stores, real in-process worker). No external
+# services and no credentials — slower than `test`, still hermetic.
+test-integration:
+	uv run pytest tests/integration -q
 
 # All tests, including SDR (requires SDR container; see README §SDR tests).
 test-all:

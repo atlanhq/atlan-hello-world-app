@@ -143,6 +143,7 @@ jobs:
     with:
       app-name: "hello-world"
       app-image-name: "atlan-hello-world-app"
+      test-paths: "tests/integration/"
 
 
       # services-script: .github/test/setup-services.sh

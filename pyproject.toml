@@ -31,16 +31,32 @@ typeCheckingMode = "standard"
 reportMissingTypeStubs = false
 reportMissingImports = false
 
-# hello-world is a reference scaffold with no external system to connect to
-# and self_deployed_runtime: false — there is nothing for an integration or
-# e2e suite to exercise yet. Revisit if this app grows a real connector.
+# The integration tier is no longer exempt: tests/integration/ runs the App on
+# the SDK's integration fixture kit, which needs no external system — an
+# embedded Temporal dev server, mocked stores and a real in-process worker.
+#
+# e2e stays exempt. That tier is the full pipeline including system apps, in
+# SDR mode against a real tenant, and hello-world has self_deployed_runtime:
+# false with no system-app integration to exercise. Revisit if that changes.
 [tool.conformance]
-exempt_test_tiers = ["integration", "e2e"]
+exempt_test_tiers = ["e2e"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
+# Must match the fixture loop scope. The kit's embedded_temporal / temporal_client
+# / worker fixtures are pinned loop_scope="session", and the integration tests
+# await work those fixtures' loop has to service. Left unset this defaults to
+# "function", which does not fail — it HANGS until the suite timeout
+# (conformance rule T019).
+asyncio_default_test_loop_scope = "session"
+# The unit tier only. The integration tier boots an embedded Temporal server,
+# so it is opted into explicitly — `make test-integration` locally, and the
+# `test-paths` input in .github/workflows/tests.yaml in CI.
 testpaths = ["tests/unit"]
+markers = [
+    "integration: runs the App against the SDK integration fixture kit (embedded Temporal); deselected from the unit job",
+]
 
 [tool.poe.tasks]
 # Regenerate atlan.yaml, app.yaml, and app/generated/ from contract/app.pkl.
