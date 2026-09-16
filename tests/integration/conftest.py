@@ -14,11 +14,17 @@ external, so the kit's default ``integration_source`` of ``None`` — and the
 empty ``integration_secrets`` that follows from it — is already correct: there
 is no container to start and no credential to seed.
 
-The ``os.environ.setdefault`` calls must stay above the imports. Importing
-anything under ``application_sdk`` snapshots these values into
-``application_sdk.constants``, and the kit raises ``IntegrationEnvOrderingError``
-at import time when the snapshot and the live environment disagree. Hence the
-``# noqa: E402`` markers rather than a reordering.
+The ``os.environ.setdefault`` calls must stay above the imports, and this is the
+one thing to preserve when editing this file. Importing anything under
+``application_sdk`` snapshots these values into ``application_sdk.constants``,
+so an import hoisted above them would bind the wrong ones. The kit checks the
+snapshot against the live environment when it loads and raises
+``IntegrationEnvOrderingError`` if they disagree, which surfaces as a collection
+error failing every test rather than as a subtly mistagged run.
+
+Ruff's import rules do not fight this: ``I`` sorts only within a contiguous
+import block, and ``E402`` does not fire on module-level statements of this
+shape, so no suppression is needed to keep the order.
 """
 
 import os
@@ -26,11 +32,10 @@ import os
 os.environ.setdefault("ATLAN_APPLICATION_NAME", "hello-world")
 os.environ.setdefault("ATLAN_DEPLOYMENT_NAME", "ci")
 
-import pytest  # noqa: E402
+import pytest
+from application_sdk.testing.integration.fixtures import *  # noqa: F403
 
-from application_sdk.testing.integration.fixtures import *  # noqa: E402, F403
-
-from app.connector import HelloWorldApp  # noqa: E402
+from app.connector import HelloWorldApp
 
 
 @pytest.fixture(scope="session")

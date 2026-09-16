@@ -14,6 +14,22 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["app"]
 
+# Pin the resolver's default index (conformance D012). Without this the resolver
+# inherits whatever default the machine supplies, and on an Atlan laptop that is
+# the Endor Labs package firewall configured in ~/.config/uv/uv.toml. Every
+# `uv run` / `uv sync` / `uv lock` then rewrites every package URL in uv.lock to
+# that credentialed proxy — silently, with no version or hash change — and CI,
+# which holds no credential for that host, fails at dependency install with 401
+# Unauthorized. This has already happened once in this repo.
+#
+# It belongs here rather than in a project-level uv.toml: a uv.toml suppresses
+# [tool.uv] entirely, which would silently drop any constraint-dependencies CVE
+# floors declared there.
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+default = true
+
 [dependency-groups]
 dev = [
     "atlan-application-sdk[tests]>=3.0.0,<4.0.0",

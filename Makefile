@@ -9,8 +9,19 @@ install:
 generate:
 	pkl eval --project-dir contract -m . contract/app.pkl
 
-# Fail if the checked-in generated files drift from the Pkl source. Used by CI.
+# Fail if the checked-in generated files drift from the Pkl source.
+#
+# The ruff pass is not optional. `pkl eval` emits generated Python unformatted,
+# but the files are committed after pre-commit's ruff hooks have run over them —
+# so a raw generate-then-diff reports a file as stale purely because ruff would
+# reorder its imports, which it did for app/generated/_e2e_substitutions.py.
+# The SDK's generated-freshness workflow formats before diffing for exactly this
+# reason; this target has to do the same or it disagrees with the gate it mirrors.
+# Version pinned to match .pre-commit-config.yaml — a different ruff formats
+# differently, which would reintroduce the same false positive from the other side.
 check-generate: generate
+	@uvx ruff@0.11.2 check --fix --quiet app/generated/ >/dev/null 2>&1 || true
+	@uvx ruff@0.11.2 format --quiet app/generated/ >/dev/null 2>&1 || true
 	@git diff --exit-code atlan.yaml app.yaml app/generated/ \
 		|| (echo "ERROR: generated files are stale. Run 'make generate' and commit." && exit 1)
 

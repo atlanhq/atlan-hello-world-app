@@ -56,9 +56,7 @@ async def test_workflow_writes_the_greetings_file(executor: AppExecutor) -> None
     assert greetings_path.is_file()
 
     records = [
-        orjson.loads(line)
-        for line in greetings_path.read_bytes().splitlines()
-        if line.strip()
+        orjson.loads(line) for line in greetings_path.read_bytes().splitlines() if line.strip()
     ]
     assert [record["message"] for record in records] == [
         "Hello, World!",
