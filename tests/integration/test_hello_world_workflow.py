@@ -18,6 +18,7 @@ from pathlib import Path
 
 import orjson
 import pytest
+from application_sdk.execution.settings import load_interceptor_settings
 from application_sdk.testing.integration.fixtures import AppExecutor
 
 from app.connector import HelloWorldApp
@@ -39,12 +40,19 @@ async def test_workflow_produces_greetings_end_to_end(executor: AppExecutor) -> 
     assert output.record_count == 3
 
 
-async def test_workflow_writes_the_greetings_file(executor: AppExecutor) -> None:
+async def test_workflow_writes_the_greetings_file(
+    executor: AppExecutor,
+    store_root: Path,
+) -> None:
     """The ``FileReference`` returned by the run points at a real JSONL file.
 
     Asserting on the artifact rather than only the summary is what proves the
     two tasks were chained through the workflow: ``summarize`` counted records
     that ``generate_greetings`` had actually written to disk.
+
+    The file is read from the object store at the ref's ``storage_path`` — the
+    durable ``RETAINED`` copy a consumer downloads — not from ``local_path``,
+    which is task scratch that ``App.on_complete()`` cleanup deletes.
     """
     output = await executor.execute_app(
         HelloWorldApp,
@@ -52,8 +60,9 @@ async def test_workflow_writes_the_greetings_file(executor: AppExecutor) -> None
     )
 
     assert output.output_file is not None
-    greetings_path = Path(output.output_file.local_path or "")
-    assert greetings_path.is_file()
+    assert output.output_file.storage_path
+    greetings_path = store_root / output.output_file.storage_path
+    assert greetings_path.is_file(), f"No durable greetings file at {greetings_path}"
 
     records = [
         orjson.loads(line) for line in greetings_path.read_bytes().splitlines() if line.strip()
@@ -63,3 +72,24 @@ async def test_workflow_writes_the_greetings_file(executor: AppExecutor) -> None
         "Hello, World!",
     ]
     assert [record["index"] for record in records] == [0, 1]
+
+
+async def test_local_greetings_file_cleaned_up(executor: AppExecutor) -> None:
+    """The local copy is scratch: ``App.on_complete()`` cleanup deletes it.
+
+    Pins the production behaviour — only the object-store copy outlives a run,
+    so downstream code must read ``storage_path``, never ``local_path``.
+    """
+    if not load_interceptor_settings().enable_cleanup_interceptor:
+        pytest.skip("Cleanup disabled by APPLICATION_SDK_ENABLE_CLEANUP_INTERCEPTOR")
+
+    output = await executor.execute_app(
+        HelloWorldApp,
+        HelloWorldInput(name="World", repeat_count=1),
+    )
+
+    assert output.output_file is not None
+    assert output.output_file.local_path
+    assert not Path(output.output_file.local_path).exists(), (
+        f"Local scratch survived cleanup: {output.output_file.local_path}"
+    )
