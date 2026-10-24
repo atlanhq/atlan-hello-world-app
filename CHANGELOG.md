@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.0.1 (October 24, 2026)
+
+Full Changelog: https://github.com/atlanhq/atlan-hello-world-app/compare/v1.0.0...v1.0.1
+
+### Chores
+
+- lock file maintenance (#591) (by @atlan-app-fleet[bot] in [48e0f39](https://github.com/atlanhq/atlan-hello-world-app/commit/48e0f39))
+- update atlan framework dependencies (#593) (by @atlan-app-fleet[bot] in [c5adb9f](https://github.com/atlanhq/atlan-hello-world-app/commit/c5adb9f))
+- lock file maintenance (#594) (by @atlan-app-fleet[bot] in [3e12648](https://github.com/atlanhq/atlan-hello-world-app/commit/3e12648))
+- lock file maintenance (#596) (by @atlan-app-fleet[bot] in [d453b7f](https://github.com/atlanhq/atlan-hello-world-app/commit/d453b7f))
+- update dependency atlan-application-sdk-conformance to v0.52.1 (#595) (by @atlan-app-fleet[bot] in [c33f1cd](https://github.com/atlanhq/atlan-hello-world-app/commit/c33f1cd))
+- update dependency atlan-application-sdk to v3.52.0 (#597) (by @atlan-app-fleet[bot] in [8f702d4](https://github.com/atlanhq/atlan-hello-world-app/commit/8f702d4))
+- lock file maintenance (#598) (by @atlan-app-fleet[bot] in [29a382d](https://github.com/atlanhq/atlan-hello-world-app/commit/29a382d))
+- lock file maintenance (#599) (by @atlan-app-fleet[bot] in [ac9c9e4](https://github.com/atlanhq/atlan-hello-world-app/commit/ac9c9e4))
+
+
 ## v1.0.0 (October 22, 2026)
 
 Full Changelog: https://github.com/atlanhq/atlan-hello-world-app/compare/v0.1.0...v1.0.0
