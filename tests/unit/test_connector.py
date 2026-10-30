@@ -8,14 +8,19 @@ output contracts and on-disk side effects with no external services.
 
 from __future__ import annotations
 
+import asyncio
 import logging
+import threading
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import orjson
 import pytest
 from application_sdk.contracts.types import FileReference
 from application_sdk.errors import InvalidInputError
 
+import app.connector as connector
 from app.connector import HelloWorldApp
 from app.contracts import (
     GenerateGreetingsInput,
@@ -32,10 +37,18 @@ class _FakeContext:
         self.run_id = "test-run-id"
 
 
+class _FakeTaskContext:
+    """Stand-in for the task context's blocking-call offloader."""
+
+    async def run_in_thread(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
+        return await asyncio.to_thread(func, *args, **kwargs)
+
+
 @pytest.fixture
-def hello_app() -> HelloWorldApp:
+def hello_app(monkeypatch: pytest.MonkeyPatch) -> HelloWorldApp:
     app = HelloWorldApp()
     app._context = _FakeContext()  # type: ignore[assignment]
+    monkeypatch.setattr(app, "_task_context", _FakeTaskContext())
     return app
 
 
@@ -61,6 +74,22 @@ class TestGenerateGreetings:
         assert len(records) == 4
         assert all(r["message"] == "Hello, Atlan!" for r in records)
         assert [r["index"] for r in records] == [0, 1, 2, 3]
+
+    async def test_writes_greetings_in_worker_thread(
+        self, hello_app: HelloWorldApp, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        event_loop_thread_id = threading.get_ident()
+        writer_thread_ids: list[int] = []
+        original_write = connector._write_greetings
+
+        def track_writer(out_path: Path, name: str, repeat_count: int) -> None:
+            writer_thread_ids.append(threading.get_ident())
+            original_write(out_path, name, repeat_count)
+
+        monkeypatch.setattr(connector, "_write_greetings", track_writer)
+        await hello_app.generate_greetings(GenerateGreetingsInput(name="World", repeat_count=1))
+        assert len(writer_thread_ids) == 1
+        assert writer_thread_ids[0] != event_loop_thread_id
 
     async def test_repeat_count_zero_raises(self, hello_app: HelloWorldApp, tmp_path: Path) -> None:
         with pytest.raises(InvalidInputError):
