@@ -46,6 +46,14 @@ _TASK_HEARTBEAT_TIMEOUT_SECONDS = 30
 _TASK_AUTO_HEARTBEAT_SECONDS = 10
 
 
+def _write_greetings(out_path: Path, name: str, repeat_count: int) -> None:
+    """Write greetings as newline-delimited JSON."""
+    with out_path.open("wb") as output:
+        for index in range(repeat_count):
+            record = {"index": index, "message": f"Hello, {name}!"}
+            output.write(orjson.dumps(record) + b"\n")
+
+
 class HelloWorldApp(App):
     """The minimum-viable Atlan App.
 
@@ -78,10 +86,7 @@ class HelloWorldApp(App):
             input.repeat_count,
         )
 
-        with out_path.open("wb") as f:
-            for i in range(input.repeat_count):
-                record = {"index": i, "message": f"Hello, {input.name}!"}
-                f.write(orjson.dumps(record) + b"\n")
+        await self.run_in_thread(_write_greetings, out_path, input.name, input.repeat_count)
 
         self.logger.info(
             "generate_greetings completed record_count=%d output=%s",
