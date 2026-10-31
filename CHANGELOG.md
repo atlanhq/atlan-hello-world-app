@@ -1,5 +1,42 @@
 # Changelog
 
+## v1.0.1 (October 31, 2026)
+
+Full Changelog: https://github.com/atlanhq/atlan-hello-world-app/compare/v1.0.0...v1.0.1
+
+### Chores
+
+- lock file maintenance (#591) (by @atlan-app-fleet[bot] in [48e0f39](https://github.com/atlanhq/atlan-hello-world-app/commit/48e0f39))
+- update atlan framework dependencies (#593) (by @atlan-app-fleet[bot] in [c5adb9f](https://github.com/atlanhq/atlan-hello-world-app/commit/c5adb9f))
+- lock file maintenance (#594) (by @atlan-app-fleet[bot] in [3e12648](https://github.com/atlanhq/atlan-hello-world-app/commit/3e12648))
+- lock file maintenance (#596) (by @atlan-app-fleet[bot] in [d453b7f](https://github.com/atlanhq/atlan-hello-world-app/commit/d453b7f))
+- update dependency atlan-application-sdk-conformance to v0.52.1 (#595) (by @atlan-app-fleet[bot] in [c33f1cd](https://github.com/atlanhq/atlan-hello-world-app/commit/c33f1cd))
+- update dependency atlan-application-sdk to v3.52.0 (#597) (by @atlan-app-fleet[bot] in [8f702d4](https://github.com/atlanhq/atlan-hello-world-app/commit/8f702d4))
+- lock file maintenance (#598) (by @atlan-app-fleet[bot] in [29a382d](https://github.com/atlanhq/atlan-hello-world-app/commit/29a382d))
+- lock file maintenance (#599) (by @atlan-app-fleet[bot] in [ac9c9e4](https://github.com/atlanhq/atlan-hello-world-app/commit/ac9c9e4))
+- lock file maintenance (#600) (by @atlan-app-fleet[bot] in [0f6bd33](https://github.com/atlanhq/atlan-hello-world-app/commit/0f6bd33))
+- lock file maintenance (#601) (by @atlan-app-fleet[bot] in [38c42dc](https://github.com/atlanhq/atlan-hello-world-app/commit/38c42dc))
+- lock file maintenance (#602) (by @atlan-app-fleet[bot] in [83c1195](https://github.com/atlanhq/atlan-hello-world-app/commit/83c1195))
+- lock file maintenance (#603) (by @atlan-app-fleet[bot] in [3d133d3](https://github.com/atlanhq/atlan-hello-world-app/commit/3d133d3))
+- lock file maintenance (#604) (by @atlan-app-fleet[bot] in [83a565f](https://github.com/atlanhq/atlan-hello-world-app/commit/83a565f))
+- lock file maintenance (#605) (by @atlan-app-fleet[bot] in [d00a679](https://github.com/atlanhq/atlan-hello-world-app/commit/d00a679))
+- lock file maintenance (#607) (by @atlan-app-fleet[bot] in [e20faec](https://github.com/atlanhq/atlan-hello-world-app/commit/e20faec))
+- update dependency atlan-application-sdk to v3.53.0 (#606) (by @atlan-app-fleet[bot] in [266c441](https://github.com/atlanhq/atlan-hello-world-app/commit/266c441))
+- lock file maintenance (#608) (by @atlan-app-fleet[bot] in [5b47749](https://github.com/atlanhq/atlan-hello-world-app/commit/5b47749))
+- lock file maintenance (#609) (by @atlan-app-fleet[bot] in [790a59a](https://github.com/atlanhq/atlan-hello-world-app/commit/790a59a))
+- lock file maintenance (#610) (by @atlan-app-fleet[bot] in [9f5b5d0](https://github.com/atlanhq/atlan-hello-world-app/commit/9f5b5d0))
+- lock file maintenance (#611) (by @atlan-app-fleet[bot] in [e96fcba](https://github.com/atlanhq/atlan-hello-world-app/commit/e96fcba))
+- lock file maintenance (#612) (by @atlan-app-fleet[bot] in [cb238d4](https://github.com/atlanhq/atlan-hello-world-app/commit/cb238d4))
+- update dependency atlan-application-sdk to v3.53.1 (#613) (by @atlan-app-fleet[bot] in [2035a60](https://github.com/atlanhq/atlan-hello-world-app/commit/2035a60))
+- update dependency atlan-application-sdk-conformance to v0.53.0 (#614) (by @atlan-app-fleet[bot] in [dba0a16](https://github.com/atlanhq/atlan-hello-world-app/commit/dba0a16))
+- lock file maintenance (#615) (by @atlan-app-fleet[bot] in [fc62e98](https://github.com/atlanhq/atlan-hello-world-app/commit/fc62e98))
+- lock file maintenance (#616) (by @atlan-app-fleet[bot] in [e30a11d](https://github.com/atlanhq/atlan-hello-world-app/commit/e30a11d))
+- lock file maintenance (#618) (by @atlan-app-fleet[bot] in [b5ee5e5](https://github.com/atlanhq/atlan-hello-world-app/commit/b5ee5e5))
+- lock file maintenance (#619) (by @atlan-app-fleet[bot] in [4974d40](https://github.com/atlanhq/atlan-hello-world-app/commit/4974d40))
+- lock file maintenance (#620) (by @atlan-app-fleet[bot] in [89e6ca9](https://github.com/atlanhq/atlan-hello-world-app/commit/89e6ca9))
+- lock file maintenance (#621) (by @atlan-app-fleet[bot] in [4730f08](https://github.com/atlanhq/atlan-hello-world-app/commit/4730f08))
+
+
 ## v1.0.0 (October 22, 2026)
 
 Full Changelog: https://github.com/atlanhq/atlan-hello-world-app/compare/v0.1.0...v1.0.0
